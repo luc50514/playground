@@ -6,7 +6,7 @@ defmodule PlaygroundTest do
     assert Playground.hello() == :world
   end
 
-  test "Sends message with value" do
+  test "View should return current value 0" do
     playground = Playground.start()
     send(playground, {:view, self()})
     assert_receive{:response, 0}
