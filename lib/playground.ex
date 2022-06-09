@@ -6,27 +6,44 @@ defmodule Playground do
 
   def start do
     spawn(fn -> loop(0) end)
-    {:ok, "spawned process"}
+  end
+
+  def start(beginningvalue) do
+    spawn(fn -> loop(beginningvalue) end)
   end
 
   def view(server_pid) do
-    IO.puts(inspect server_pid)
-    IO.puts(inspect self())
     send(server_pid, {:view, self()})
-    value = receive do
+    receive do
       {:response, value} ->
         value
     end
-
-    value
+  end
+  def add(server_pid, value) do
+    send(server_pid, {:add, value})
+    view(server_pid)
+  end
+  def subtract(server_pid, value) do
+    send(server_pid, {:subtract, value})
+    view(server_pid)
+  end
+  def division(server_pid, value) do
+    send(server_pid, {:division, value})
+    view(server_pid)
+  end
+  def multiply(server_pid, value) do
+    send(server_pid, {:multiply, value})
+    view(server_pid)
   end
   defp loop(current) do
-    IO.puts("start looping")
-    IO.puts("loop: #{inspect self()}" )
     recievedvalue = receive do
       {:view, caller_pid} ->
         send(caller_pid, {:response, current})
         current
+      {:add, value} -> current + value
+      {:subtract, value} -> current - value
+      {:division, value} -> current / value
+      {:multiply, value} -> current * value
     end
     loop(recievedvalue)
   end
